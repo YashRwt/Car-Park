@@ -2,7 +2,7 @@
 #include <string>
 #include <list>
 #include <algorithm>
-
+#include <fstream>
 
 
 using namespace std;
@@ -115,6 +115,7 @@ int main(){
         list<string> Plate;
         cout<<"\nPls Enter the Car Number Plate :-"<<ends;
         cin>>Plate_no;
+
         cout<<"\nPls Enter the Time in format of 24 Hrs as of \n\n\t'2030' as of 8:30PM\n\t'600' as of 6:00AM"<<endl;
         cout<<"\nPls Enter the Departure Time :-"<<ends;
         cin>>Departure;
@@ -197,8 +198,35 @@ int main(){
     }
     else if(enter==4){ //To Export all Records
 
-        cout<<"\n---Data---"<<endl<<endl;
-        cout<<"To Show all Records"<<endl;
+        ofstream fw("d:\\file.txt", std::ofstream::out);
+        //check if file was successfully opened for writing
+        if (fw.is_open()){
+
+            fw << "[ Plate  Day  Arrival Departure Revenue ]\n";
+
+            list<list<string>>::iterator nested_list_itr;
+            //store array contents to tent tile
+            for (nested_list_itr = main_list.begin(); nested_list_itr != main_list.end(); ++nested_list_itr){
+
+                fw << "\n[  ";
+                // as loop goes on
+                list<string>& single_list_pointer = *nested_list_itr;
+                _List_iterator<string> single_list_itr;
+                int itr_no=0;
+
+                //Iterating through the Records
+                for (single_list_itr = single_list_pointer.begin();single_list_itr != single_list_pointer.end();single_list_itr++) {
+
+                    fw << *single_list_itr<<" ";
+                }
+                fw << " ]\n";
+            }
+            fw.close();
+            cout << "\n\t*** Records Uploaded in the File!! ***"<<endl;
+        }else {cout <<"\n\t* Problem with Opening The File *"<<endl;}
+
+        cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
+        string abcd;cin>>abcd;
         main();
 
     }
@@ -206,10 +234,19 @@ int main(){
 
         cout<<"\n\t*** Records cleared ***\n"<<endl<<endl;
         main_list.erase(main_list.begin(),main_list.end());
+        cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
+        string abcd;cin>>abcd;
         main();
     }
 
-    else if(enter==6){exit(0);}
+    else if(enter==6){
+        cout<<"\n\n\t*** THANKS FOR USING ***\n"<<ends;
+        exit(0);}
+    else{
+        cout<<"\n\n\t*** INPUT NOT RECOGNISED ***"<<ends;
+        cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
+        string abcd;cin>>abcd;
+        main();}
 
 }
 
