@@ -10,11 +10,12 @@ using std::cout; using std::cin;
 using std::endl; using std::string;
 
 list<list<string> > main_list; //Contains all the Entry's and Exits
+list<list<string> > previous_record; //Contains all the Entry's and Exits
 
 
 void printNestedList(list<list<string> > nested_list)
 {
-    cout << "[ Num_Plate Day Arrival Departure ]\n"<<endl;
+    //cout << "[ Num_Plate Day Arrival Departure ]\n"<<endl;
 
     // nested_list`s iterator(same type as nested_list)
     // to iterate the nested_list
@@ -70,7 +71,6 @@ int main(){
 
         cout<<"\nPls Enter the Car Number Plate :-"<<ends;
         cin>>plate;
-        cout<<"\nPls Enter the Date in format of DD/MM/yy as of \n\n\t'29/02/20' as of 29 February 2020"<<endl;
         cout<<"\nPls Enter the Date :-"<<ends;
         cin>>day;
         cout<<"\nPls Enter the Time in format of 24 Hrs as of \n\n\t'2030' as of 8:30PM\n\t'600' as of 6:00AM"<<endl;
@@ -78,11 +78,10 @@ int main(){
         cin>>clock_in;
 
         //Data Stored in string type inside of lists
-
         list<string> new_list;
 
         // no of lists in nested list & no of elements in list
-        int n=1, m=4;
+        int n=1,m=4;
         string num;
 
         for (int i = 0; i < n; i++) {
@@ -100,7 +99,7 @@ int main(){
 
             // delete all elements from single_list
             new_list.erase(new_list.begin(),
-                              new_list.end());
+                           new_list.end());
         }
 
         printNestedList(main_list );
@@ -120,10 +119,10 @@ int main(){
         cout<<"\nPls Enter the Departure Time :-"<<ends;
         cin>>Departure;
 
-            //Declaring the necessary values
+        //Declaring the necessary values
         Plate.push_back(Plate_no);
         list<string>::iterator Target_plate;
-        int arrival_time;
+        int arrival_time;list<string> Updated_record;
 
         list<list<string>>::iterator nested_list_itr;
         for ( Target_plate = Plate.begin(); Target_plate != Plate.end(); ++Target_plate){
@@ -139,7 +138,7 @@ int main(){
                 list<string>& single_list_pointer = *nested_list_itr;
                 int itr_no=0;
 
-                    //Iterating through the Records
+                //Iterating through the Records
                 for (single_list_itr = single_list_pointer.begin();single_list_itr != single_list_pointer.end();single_list_itr++) {
 
                     itr_no++;   //keeping the count
@@ -147,16 +146,20 @@ int main(){
 
                         if (*single_list_itr == *Target_plate){     //Checking the desired list(same plate)
 
-                                //Updating The Record
-                            std::replace_if(single_list_pointer.begin(), single_list_pointer.end(),[](string x) {return x == "0000";}, Departure);
+                            //Updating The Record
+                            _List_iterator<string> list_itr;
+                            std::replace_if(single_list_pointer.begin(), single_list_pointer.end(),[](const string& x) {return x == "0000";}, Departure);
 
-                                    //Getting the Arrival Time
-                            for (single_list_itr = single_list_pointer.begin();single_list_itr != single_list_pointer.end();single_list_itr++){
+                            //Getting the Arrival Time
+                            for (list_itr = single_list_pointer.begin();list_itr != single_list_pointer.end();list_itr++){
                                 ++count;
                                 if(count==3){ //Getting The Arrival Time from the Target Record
-                                    arrival_time= stoi(*single_list_itr);
+                                    arrival_time= stoi(*list_itr);
                                 }
                             }
+                            //Remembering the Updated Record
+                            Updated_record=single_list_pointer;
+
                         }
                     }
                 }
@@ -168,17 +171,22 @@ int main(){
 
         printNestedList(main_list );
 
-            //Calculating the hours/Amount
+        //Calculating the hours/Amount
         float amount;int diff= ((stoi(Departure)/100)-(arrival_time/100));
         cout<<diff<<endl;
 
-        //Amount to be Paid
+        //Determining The Amount to be Paid
         if (diff>8){amount=30.00;}
         else if(diff>7){amount=15.0;}
         else if(diff>3){amount=5.00;}
         else if(diff>1){amount=3.00;}
         else if(diff>0){amount=1.50;}
         else{amount=0.00;}
+
+        //Switching DataBase of the Newly Updated Record
+        main_list.remove(Updated_record);
+        Updated_record.push_back(to_string(amount));
+        previous_record.push_back(Updated_record);
 
 
         cout<<"\n\nPayable Amount is = £ "<<amount<<ends;
@@ -189,30 +197,51 @@ int main(){
     }
     else if(enter==3){ //To Show all Records
 
-        cout<<"\n\t^^^ Displaying all Records ^^^\n"<<endl;
-        printNestedList(main_list );
+        cout<<"\n\t* Select Options *\n"<<endl;
+        cout<<"1 for Cars in Parking Lot\n2 For Cars that Left\n"<<endl;
+        cout<<"\nPls Enter your Choice : "<<ends;
+        string choice;
+        cin>>choice;
+        if(choice=="1"){
+            cout<<"\n\t^^^ Displaying all Records ^^^\n"<<endl;
+
+            cout << "[ Num_Plate Day Arrival Departure ]\n"<<endl;
+            printNestedList(main_list );}
+
+
+        else if(choice=="2"){
+            cout<<"\n\t^^^ Displaying all Records ^^^\n"<<endl;
+
+            cout << "[ Num_Plate Day Arrival Departure Revenue ]\n"<<endl;
+            printNestedList(previous_record );}
+        else{
+            cout<<"\n\n\t*** INPUT NOT RECOGNISED ***"<<ends;}
+
+
+
 
         cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
         string abcd;cin>>abcd;
         main();
     }
-    else if(enter==4){ //To Export all Records
+    else if(enter==4){ //To Export all Old Records
 
         ofstream fw("d:\\file.txt", std::ofstream::out);
         //check if file was successfully opened for writing
         if (fw.is_open()){
 
-            fw << "[ Plate  Day  Arrival Departure Revenue ]\n";
+            fw << "[  Plate  Day  Arrival Departure Revenue ]\n";
 
+            list<list<string>> nested_list;
             list<list<string>>::iterator nested_list_itr;
+            nested_list=previous_record;
             //store array contents to tent tile
-            for (nested_list_itr = main_list.begin(); nested_list_itr != main_list.end(); ++nested_list_itr){
+            for (nested_list_itr = nested_list.begin(); nested_list_itr != nested_list.end(); ++nested_list_itr){
 
                 fw << "\n[  ";
                 // as loop goes on
                 list<string>& single_list_pointer = *nested_list_itr;
                 _List_iterator<string> single_list_itr;
-                int itr_no=0;
 
                 //Iterating through the Records
                 for (single_list_itr = single_list_pointer.begin();single_list_itr != single_list_pointer.end();single_list_itr++) {
@@ -232,17 +261,17 @@ int main(){
     }
     else if(enter==5){ //Clear Records
 
-        cout<<"\n\t*** Records cleared ***\n"<<endl<<endl;
+        cout<<"\n\t*** Records cleared ***"<<endl<<endl;
         main_list.erase(main_list.begin(),main_list.end());
         cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
         string abcd;cin>>abcd;
         main();
     }
 
-    else if(enter==6){
+    else if(enter==6){ //to close the Program
         cout<<"\n\n\t*** THANKS FOR USING ***\n"<<ends;
         exit(0);}
-    else{
+    else{   //In case of Wrong Input
         cout<<"\n\n\t*** INPUT NOT RECOGNISED ***"<<ends;
         cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
         string abcd;cin>>abcd;
