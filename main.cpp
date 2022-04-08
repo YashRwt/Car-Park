@@ -15,7 +15,7 @@ list<list<string> > previous_record; //Contains all the Entry's and Exits
 
 void printNestedList(list<list<string> > nested_list)
 {
-    //cout << "[ Num_Plate Day Arrival Departure ]\n"<<endl;
+
 
     // nested_list`s iterator(same type as nested_list)
     // to iterate the nested_list
@@ -102,8 +102,12 @@ int main(){
                            new_list.end());
         }
 
+        cout<<"\n\t *** New Car Added ***\n"<<endl;
         printNestedList(main_list );
 
+
+        cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
+        string abcd;cin>>abcd;
         main();
 
     }
@@ -168,19 +172,25 @@ int main(){
 
         //Clearing the Input List
         Plate.erase(Plate.begin(),Plate.end());
-
+        cout<<" "<<endl;
         printNestedList(main_list );
 
         //Calculating the hours/Amount
-        float amount;int diff= ((stoi(Departure)/100)-(arrival_time/100));
-        cout<<diff<<endl;
 
-        //Determining The Amount to be Paid
-        if (diff>8){amount=30.00;}
-        else if(diff>7){amount=15.0;}
-        else if(diff>3){amount=5.00;}
-        else if(diff>1){amount=3.00;}
-        else if(diff>0){amount=1.50;}
+                        //Hours into minutes  +   Extracted minutes
+        int entry_min= (arrival_time/100)*60 + (arrival_time-(arrival_time/100)*100) ;
+        int exit_min= (stoi(Departure)/100)*60 + (stoi(Departure)-(stoi(Departure)/100)*100) ;
+
+        float amount;int diff= exit_min-entry_min;
+
+        cout<<"\n Total Time : "<<diff<<" Minutes"<<endl;
+
+        //Determining The Amount to be Paid(in Minutes)
+        if (diff>480){amount=30.00;}
+        else if(diff>240){amount=15.0;}
+        else if(diff>120){amount=5.00;}
+        else if(diff>60){amount=3.00;}
+        else if(diff>30){amount=1.50;}
         else{amount=0.00;}
 
         //Switching DataBase of the Newly Updated Record
@@ -189,7 +199,7 @@ int main(){
         previous_record.push_back(Updated_record);
 
 
-        cout<<"\n\nPayable Amount is = £ "<<amount<<ends;
+        cout<<"\nPayable Amount is = £ "<<amount<<ends;
 
         cout<<"\n\nTo Continue Pls Enter 'y' : "<<ends;
         string abcd;cin>>abcd;
