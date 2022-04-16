@@ -3,6 +3,7 @@
 #include <list>
 #include <algorithm>
 #include <fstream>
+#include "catch.hpp"
 
 
 using namespace std;
@@ -212,14 +213,15 @@ int main(){
         cout<<"\nPls Enter your Choice : "<<ends;
         string choice;
         cin>>choice;
-        if(choice=="1"){
+
+        if(choice=="1"){//Displaying All Cars in parking lot
             cout<<"\n\t^^^ Displaying all Records ^^^\n"<<endl;
 
             cout << "[ Num_Plate Day Arrival Departure ]\n"<<endl;
             printNestedList(main_list );}
 
 
-        else if(choice=="2"){
+        else if(choice=="2"){// Displaying All Cars that left parking lot
             cout<<"\n\t^^^ Displaying all Records ^^^\n"<<endl;
 
             cout << "[ Num_Plate Day Arrival Departure Revenue ]\n"<<endl;
